@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import DashIcon from "../assets/dashboard.svg";
-import UsersIcon from "../assets/multi-user.svg";
-import Admin from "../assets/admin.svg";
+import HomeIcon from "../assets/home-1.svg";
+import SettingIcon from "../assets/setting-2.svg"
+
 
 const NavItem = ({ icon, label, isActive, onClick }) => (
   <div
@@ -19,7 +19,7 @@ const NavItem = ({ icon, label, isActive, onClick }) => (
   </div>
 );
 
-const SidebarNav = () => {
+const HomeSidebar = () => {
   const [activePage, setActivePage] = useState("dashboard");
 
   const handleNavItemClick = (page) => {
@@ -41,22 +41,16 @@ const SidebarNav = () => {
 
       <div className="flex flex-col mt-4 space-y-2 px-2">
         <NavItem
-          icon={DashIcon}
-          label="Dashboard"
-          isActive={activePage === "dashboard"}
-          onClick={() => handleNavItemClick("dashboard")}
+          icon={HomeIcon}
+          label="Home"
+          isActive={activePage === "Home"}
+          onClick={() => handleNavItemClick("Home")}
         />
         <NavItem
-          icon={UsersIcon}
-          label="User's Feedback"
-          isActive={activePage === "feedback"}
-          onClick={() => handleNavItemClick("feedback")}
-        />
-        <NavItem
-          icon={Admin}
-          label="Admin Info"
-          isActive={activePage === "admin"}
-          onClick={() => handleNavItemClick("admin")}
+          icon={SettingIcon}
+          label="Settings"
+          isActive={activePage === "Settings"}
+          onClick={() => handleNavItemClick("Settings")}
         />
       </div>
 
@@ -69,13 +63,13 @@ const SidebarNav = () => {
             alt="Admin avatar"
             className="w-10 h-10 rounded-full object-cover"
           />
-          <span className="text-base text-white">Admin</span>
+          <span className="text-base text-white">User</span>
         </div>
         <div className="flex items-center gap-4">
           
-          <img
+        <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/558910e7186b2cea6943e8805e77b013965faad2"
-            alt="Notifications"
+            alt="LogOut"
             className="w-5 h-5 object-contain cursor-pointer"
           />
         </div>
@@ -84,4 +78,4 @@ const SidebarNav = () => {
   );
 };
 
-export default SidebarNav;
+export default HomeSidebar;
