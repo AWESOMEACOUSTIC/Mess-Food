@@ -7,24 +7,24 @@ function Form() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    // Handle sign in with email and password
+    //sign in with email and password
     const handleEmailSignIn = async (e) => {
         e.preventDefault();
         setError("");
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            // On success, you might want to redirect the user or clear the form.
+   
         } catch (err) {
             setError(err.message);
         }
     };
 
-    // Handle Google sign in using Firebase
+  
     const handleGoogleSignIn = async () => {
         setError("");
         try {
             await signInWithPopup(auth, googleProvider);
-            // On success, perform any redirect or state updates.
+           
         } catch (err) {
             setError(err.message);
         }
@@ -102,7 +102,7 @@ function Form() {
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                     >
-                        {/* Google Icon SVG content */}
+                        
                         <path
                             d="M21.35 11.1h-9.18v2.73h5.27c-.23 1.26-.93 2.33-1.98 3.04v2.53h3.19c1.87-1.73 2.95-4.28 2.95-7.3 0-.64-.06-1.26-.18-1.85z"
                             fill="#4285F4"

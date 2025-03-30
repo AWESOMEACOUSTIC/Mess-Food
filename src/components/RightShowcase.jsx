@@ -14,7 +14,6 @@ function RightShowcase() {
   });
   const [message, setMessage] = useState("");
 
-  // Handle form input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -23,18 +22,16 @@ function RightShowcase() {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.terms) {
       alert("Please agree to the Terms & Conditions.");
       return;
     }
-    // Display form data (or send to a backend API)
+  
     console.log(formData);
     setMessage("Account created successfully!");
 
-    // Reset form
     setFormData({
       fullName: "",
       registrationNumber: "",
@@ -58,11 +55,9 @@ function RightShowcase() {
           </a>
         </p>
 
-        {/* Success Message */}
         {message && <div className="mb-4 text-green-500">{message}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Full Name */}
           <div>
             <label htmlFor="fullName" className="block text-sm font-medium mb-4">
               Full Name
@@ -79,7 +74,6 @@ function RightShowcase() {
             />
           </div>
 
-          {/* Registration Number */}
           <div>
             <label
               htmlFor="registrationNumber"
@@ -99,7 +93,6 @@ function RightShowcase() {
             />
           </div>
 
-          {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-4">
               Email
@@ -116,7 +109,6 @@ function RightShowcase() {
             />
           </div>
 
-          {/* Hostel Block */}
           <div>
             <label htmlFor="hostelBlock" className="block text-sm font-medium mb-4">
               Hostel Block
@@ -133,7 +125,6 @@ function RightShowcase() {
             />
           </div>
 
-          {/* Room Number */}
           <div>
             <label htmlFor="roomNumber" className="block text-sm font-medium mb-4">
               Room Number
@@ -150,7 +141,6 @@ function RightShowcase() {
             />
           </div>
 
-          {/* Mess Name */}
           <div>
             <label htmlFor="messName" className="block text-sm font-medium mb-4">
               Mess Name
@@ -170,7 +160,6 @@ function RightShowcase() {
             </select>
           </div>
 
-          {/* Mess Type */}
           <div>
             <label className="block text-sm font-medium mb-4">Mess Type</label>
             <div className="flex items-center space-x-4">
@@ -213,7 +202,6 @@ function RightShowcase() {
             </div>
           </div>
 
-          {/* Terms & Conditions */}
           <div className="flex items-center ">
             <input
               type="checkbox"
@@ -232,7 +220,6 @@ function RightShowcase() {
             </label>
           </div>
 
-          {/* Create Account Button */}
           <button
             type="submit"
             className="w-full mt-5 py-3 rounded-md bg-blue-500 hover:bg-blue-700 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-purple-500"

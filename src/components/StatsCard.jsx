@@ -3,7 +3,6 @@ import React from "react";
 const StatsCard = ({ title, value, percentage, chart }) => {
   return (
     <div className="flex flex-col overflow-hidden my-4 bg-[#24263A] rounded-lg w-full max-w-sm">
-      {/* Top Text Content */}
       <div className="p-4">
         <div className="z-10 w-full text-zinc-200">
           <h3 className="text-xl">{title}</h3>
@@ -17,8 +16,6 @@ const StatsCard = ({ title, value, percentage, chart }) => {
         </div>
       </div>
 
-
-      {/* Chart Image */}
       <img
         src={chart}
         className="self-end w-full max-w-full mt-4 object-contain aspect-[3.22]"

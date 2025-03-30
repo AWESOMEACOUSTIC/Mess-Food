@@ -10,12 +10,12 @@ function LeftShowcase() {
         alt="Dunes Background"
         className="absolute w-full h-full object-cover"
       />
-      {/* Dark overlay */}
+    
       <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
       {/* Logo (top-left) */}
       <div className="absolute top-0 left-0 p-4 flex items-center space-x-2 z-10">
-        {/* <img src="logo.png" alt="Logo" className="h-8 object-contain" /> */}
+        
         <span className="text-xl font-semibold text-white">MESS FOOD</span>
       </div>
 
@@ -38,7 +38,7 @@ function LeftShowcase() {
         </svg>
       </button>
 
-      {/* Center text */}
+  
       <div className="relative z-10 text-center px-4">
         <h2 className="text-3xl font-semibold mb-2 text-white">
           Capturing Moments,

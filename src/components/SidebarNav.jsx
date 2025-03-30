@@ -21,12 +21,12 @@ const SidebarNav = () => {
 
   const handleNavItemClick = (page) => {
     setActivePage(page);
-    // Additional logic if needed
+    // Additional logic 
   };
 
   return (
     <nav className="w-78 bg-[#1B1B2D] flex flex-col">
-      {/* Header / Logo */}
+    
       <div className="flex items-center gap-3 px-4 py-6">
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/16c881aef9af6ec86aa400103d24dd3bf02cb5c5"
@@ -36,7 +36,6 @@ const SidebarNav = () => {
         <p className="text-3xl font-bold text-white">MESS FOOD</p>
       </div>
 
-      {/* Navigation */}
       <div className="flex flex-col mt-4 space-y-2 px-2">
         <NavItem
           icon="https://cdn.builder.io/api/v1/image/assets/TEMP/0d75d0190c95a0a9d4134ad1327a81cd2f0e2898"
@@ -58,10 +57,8 @@ const SidebarNav = () => {
         />
       </div>
 
-      {/* Spacer / Divider */}
       <div className="mt-auto mb-4 mx-2 border-b border-gray-700"></div>
 
-      {/* Footer (Admin) */}
       <div className="flex items-center justify-between px-4 pb-6">
         <div className="flex items-center gap-3">
           <img

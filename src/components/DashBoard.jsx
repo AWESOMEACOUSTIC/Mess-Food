@@ -8,15 +8,9 @@ import special from "../assets/special.png";
 const DashBoard = () => {
   const [feedbackData, setFeedbackData] = useState([]);
 
-  // Simulate an API call or data fetch
   useEffect(() => {
     const fetchFeedbackData = async () => {
-      // In a real app, you'd do something like:
-      // const response = await fetch('/api/feedback');
-      // const data = await response.json();
-      // setFeedbackData(data);
-
-      // For demo, just simulate a delay:
+      
       setTimeout(() => {
         const data = [
           { month: "Jan", veg: 75,  nonVeg: 120, special: 20 },
@@ -52,7 +46,7 @@ const DashBoard = () => {
   const nonVegChart = nonveg;
   const specialChart = special;
 
-  // Prepare data for the bar chart (summing all feedback per month)
+  //data for the bar chart (summing all feedback per month)
   const monthlyTotalData = feedbackData.map((item) => ({
     month: item.month,
     total: (item.veg || 0) + (item.nonVeg || 0) + (item.special || 0),
@@ -60,7 +54,6 @@ const DashBoard = () => {
 
   return (
     <main className="flex-1 p-3">
-      {/* TOP StatsCardS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 p-4">
       <StatsCard
         title="Total Veg Feedback"
@@ -81,8 +74,6 @@ const DashBoard = () => {
         chart={specialChart}
       />
     </div>
-
-      {/* BAR CHART */}
       <MonthlyChart data={monthlyTotalData} />
     </main>
   );
