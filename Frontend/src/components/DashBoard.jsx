@@ -53,7 +53,7 @@ const DashBoard = () => {
   }));
 
   return (
-    <main className="flex-1 p-3">
+    <main className="flex-1 p-3 overflow-hidden">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 p-4">
       <StatsCard
         title="Total Veg Feedback"

@@ -30,10 +30,14 @@ export default function HeroPage() {
                     {/* Headings */}
                     <div className="flex max-w-[966px] flex-col items-center gap-3.5 px-2.5 text-center">
                         <div className="flex w-full flex-col items-center gap-1">
-                            <h2 className="text-7xl font-bold text-white leading-20 max-md:text-4xl max-sm:text-3xl bg-clip-text">
+                            <h2 
+                            className="text-7xl font-bold leading-20 max-md:text-4xl max-sm:text-3xl bg-gradient-to-t 
+                            from-[rgba(255,255,255,0.96)] to-[rgba(255,255,255,0.66)] bg-clip-text text-transparent">
                                 Mess Food: Crowd-Powered
                             </h2>
-                            <h2 className="text-7xl font-bold max-md:text-4xl max-sm:text-3xl bg-clip-text text-white">
+                            <h2 
+                            className="text-7xl font-bold leading-20 max-md:text-4xl max-sm:text-3xl bg-gradient-to-t 
+                            from-[rgba(255,255,255,0.96)] to-[rgba(255,255,255,0.66)] bg-clip-text text-transparent">
                                 Menu &amp; Food Feedback
                             </h2>
                         </div>

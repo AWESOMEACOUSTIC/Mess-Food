@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import DashIcon from "../assets/dashboard.svg";
 import UsersIcon from "../assets/multi-user.svg";
 import Admin from "../assets/admin.svg";
@@ -19,17 +19,13 @@ const NavItem = ({ icon, label, isActive, onClick }) => (
   </div>
 );
 
-const SidebarNav = () => {
-  const [activePage, setActivePage] = useState("dashboard");
-
+const SidebarNav = ({ activePage, setActivePage }) => {
   const handleNavItemClick = (page) => {
-    setActivePage(page);
-    // Additional logic 
+    if (setActivePage) setActivePage(page);
   };
 
   return (
     <nav className="w-78 bg-[#1B1B2D] flex flex-col">
-    
       <div className="flex items-center gap-3 px-4 py-6">
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/16c881aef9af6ec86aa400103d24dd3bf02cb5c5"
@@ -72,7 +68,6 @@ const SidebarNav = () => {
           <span className="text-base text-white">Admin</span>
         </div>
         <div className="flex items-center gap-4">
-          
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/558910e7186b2cea6943e8805e77b013965faad2"
             alt="Notifications"

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
-import { auth, googleProvider } from "./firebaseConfig"; // adjust the path as needed
+import { auth, googleProvider } from "./firebaseConfig"; 
 
 function Form() {
     const [email, setEmail] = useState("");
