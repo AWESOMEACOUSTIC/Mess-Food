@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import DashIcon from "../assets/dashboard.svg";
 import UsersIcon from "../assets/multi-user.svg";
 import Admin from "../assets/admin.svg";
@@ -20,8 +21,21 @@ const NavItem = ({ icon, label, isActive, onClick }) => (
 );
 
 const SidebarNav = ({ activePage, setActivePage }) => {
+  const navigate = useNavigate();
+  
   const handleNavItemClick = (page) => {
     if (setActivePage) setActivePage(page);
+  };
+
+  const handleLogout = () => {
+    // Clear all items from localStorage
+    localStorage.removeItem("userId");
+    localStorage.removeItem("fullname");
+    localStorage.removeItem("email");
+    localStorage.removeItem("isLoggedIn");
+    
+    // Redirect to login page
+    navigate("/login");
   };
 
   return (
@@ -70,8 +84,9 @@ const SidebarNav = ({ activePage, setActivePage }) => {
         <div className="flex items-center gap-4">
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/558910e7186b2cea6943e8805e77b013965faad2"
-            alt="Notifications"
+            alt="Logout"
             className="w-5 h-5 object-contain cursor-pointer"
+            onClick={handleLogout}
           />
         </div>
       </div>

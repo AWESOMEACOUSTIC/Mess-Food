@@ -7,6 +7,7 @@ import SidebarNav from "./components/SidebarNav";
 import Home from "./components/Home";
 import HeroPage from "./components/HeroPage";
 import FeedbackPage from "./components/FeedbackPage"; 
+import AdminInfoPage from "./components/AdminInfoPage";
 
 // DashboardLayout wraps the sidebar and main content.
 // It uses state to control whether the dashboard or feedback page is shown.
@@ -19,6 +20,7 @@ const DashboardLayout = () => {
       <div className="flex-1 overflow-hidden">
         {activePage === "dashboard" && <DashBoard />}
         {activePage === "feedback" && <FeedbackPage />}
+        {activePage === "admin" && <AdminInfoPage />}
       </div>
     </div>
   );

@@ -89,7 +89,7 @@ app.post("/api/suggestions", async (req, res) => {
     }
 });
 
-// GET /api/reports: Generate report in Excel or PDF format
+// GET /api/reports: Generate report in Excel, CSV or PDF format
 app.get("/api/reports", async (req, res) => {
     const { reportType, format } = req.query;
     try {
@@ -118,6 +118,21 @@ app.get("/api/reports", async (req, res) => {
             res.setHeader("Content-Disposition", "attachment; filename=report.xlsx");
             await workbook.xlsx.write(res);
             res.end();
+        } else if (format === "csv") {
+            // Create CSV content
+            let csvContent = "User ID,Name,Date,Meal Type,Feedback\n";
+            
+            rows.forEach(row => {
+                // Escape any commas in the content with quotes
+                const escapedFeedback = row.feedback.includes(',') ? `"${row.feedback}"` : row.feedback;
+                const escapedName = row.fullname.includes(',') ? `"${row.fullname}"` : row.fullname;
+                
+                csvContent += `${row.user_id},${escapedName},${row.date},${row.meal_type},${escapedFeedback}\n`;
+            });
+            
+            res.setHeader("Content-Type", "text/csv");
+            res.setHeader("Content-Disposition", "attachment; filename=report.csv");
+            res.send(csvContent);
         } else if (format === "pdf") {
             const doc = new PDFDocument();
             res.setHeader("Content-Type", "application/pdf");
@@ -183,6 +198,12 @@ app.get("/api/feedback", async (req, res) => {
 // POST /api/login: Log in an existing user by matching email and password
 app.post("/api/login", async (req, res) => {
     const { email, password } = req.body;
+    
+    // Basic validation
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+    
     try {
       const [rows] = await pool.query(
         "SELECT * FROM users WHERE email = ? AND password = ?",
@@ -192,7 +213,10 @@ app.post("/api/login", async (req, res) => {
         return res.status(401).json({ error: "Invalid email or password" });
       }
       const user = rows[0];
-      // You can choose to send additional data or a token here
+      
+      console.log(`User logged in: ${user.fullname} (${user.email})`);
+      
+      // Send response with user details
       res.json({
         message: "Login successful",
         user: {
@@ -206,7 +230,7 @@ app.post("/api/login", async (req, res) => {
       console.error("Login error:", err);
       res.status(500).json({ error: "Login failed", details: err.message });
     }
-  });
+});
   
 
 // GET /api/seed: Insert dummy data for testing

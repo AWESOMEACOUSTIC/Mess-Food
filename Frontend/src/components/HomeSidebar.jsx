@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import HomeIcon from "../assets/home-1.svg";
 import SettingIcon from "../assets/setting-2.svg"
 
@@ -21,10 +22,22 @@ const NavItem = ({ icon, label, isActive, onClick }) => (
 
 const HomeSidebar = () => {
   const [activePage, setActivePage] = useState("dashboard");
+  const navigate = useNavigate();
 
   const handleNavItemClick = (page) => {
     setActivePage(page);
     // Additional logic 
+  };
+
+  const handleLogout = () => {
+    // Clear all items from localStorage
+    localStorage.removeItem("userId");
+    localStorage.removeItem("fullname");
+    localStorage.removeItem("email");
+    localStorage.removeItem("isLoggedIn");
+    
+    // Redirect to login page
+    navigate("/login");
   };
 
   return (
@@ -71,6 +84,7 @@ const HomeSidebar = () => {
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/558910e7186b2cea6943e8805e77b013965faad2"
             alt="LogOut"
             className="w-5 h-5 object-contain cursor-pointer"
+            onClick={handleLogout}
           />
         </div>
       </div>

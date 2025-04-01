@@ -97,7 +97,6 @@ export async function getFeedback() {
   }
 }
 
-
 /**
  * Log in an existing user.
  * @param {Object} loginData - An object containing email and password.
@@ -110,11 +109,15 @@ export async function loginUser(loginData) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(loginData)
     });
+    
+    const data = await response.json();
+    
     if (!response.ok) {
-      // Throwing an error so the frontend can catch it and display an alert
-      throw new Error("Invalid email or password");
+      // If the server returned an error message, use it
+      throw new Error(data.error || "Invalid email or password");
     }
-    return await response.json();
+    
+    return data;
   } catch (error) {
     console.error("Error in loginUser:", error);
     throw error;
