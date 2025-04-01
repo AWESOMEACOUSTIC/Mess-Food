@@ -1,11 +1,18 @@
 require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
+const cors = require('cors');
 const mysql = require('mysql2');
 const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
 
 const app = express();
 const port = process.env.PORT || 3001;
+
+// Use CORS middleware to allow cross-origin requests
+app.use(cors());
+
+// Middleware to parse JSON requests
+app.use(express.json());
 
 // MySQL Connection Pool using promise interface
 const pool = mysql.createPool({
@@ -50,15 +57,21 @@ app.post("/api/register", async (req, res) => {
     try {
         const [result] = await pool.query(
             `INSERT INTO users (reg_no, fullname, email, password, block, room_number, mess_name, mess_type)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             [reg_no, fullname, email, password, block, room_number, mess_name, mess_type]
         );
         res.status(201).json({ message: "User registered successfully", userId: result.insertId });
     } catch (error) {
         console.error("Registration error:", error);
-        res.status(500).json({ error: "Registration failed" });
+        if (error.code === 'ER_DUP_ENTRY') {
+            res.status(400).json({ error: "Registration failed", details: "A user with this registration number already exists." });
+        } else {
+            res.status(500).json({ error: "Registration failed", details: error.message });
+        }
     }
 });
+
+
 
 // POST /api/suggestions: Submit a mess suggestion
 app.post("/api/suggestions", async (req, res) => {
@@ -90,7 +103,7 @@ app.get("/api/reports", async (req, res) => {
         if (format === "excel") {
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet("Report");
-            
+
             worksheet.columns = [
                 { header: "User ID", key: "user_id", width: 10 },
                 { header: "Name", key: "fullname", width: 30 },
@@ -98,9 +111,9 @@ app.get("/api/reports", async (req, res) => {
                 { header: "Meal Type", key: "meal_type", width: 15 },
                 { header: "Feedback", key: "feedback", width: 40 },
             ];
-            
+
             rows.forEach(row => worksheet.addRow(row));
-            
+
             res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             res.setHeader("Content-Disposition", "attachment; filename=report.xlsx");
             await workbook.xlsx.write(res);
@@ -109,17 +122,17 @@ app.get("/api/reports", async (req, res) => {
             const doc = new PDFDocument();
             res.setHeader("Content-Type", "application/pdf");
             res.setHeader("Content-Disposition", "attachment; filename=report.pdf");
-            
+
             doc.pipe(res);
             doc.fontSize(18).text("Mess Suggestions Report", { align: "center" });
             doc.moveDown();
-            
+
             rows.forEach(row => {
                 doc.fontSize(12)
-                   .text(`User ID: ${row.user_id} | Name: ${row.fullname} | Date: ${row.date} | Meal Type: ${row.meal_type} | Feedback: ${row.feedback}`);
+                    .text(`User ID: ${row.user_id} | Name: ${row.fullname} | Date: ${row.date} | Meal Type: ${row.meal_type} | Feedback: ${row.feedback}`);
                 doc.moveDown(0.5);
             });
-            
+
             doc.end();
         } else {
             res.status(400).json({ error: "Invalid format specified" });
@@ -129,6 +142,72 @@ app.get("/api/reports", async (req, res) => {
         res.status(500).json({ error: "Report generation failed" });
     }
 });
+
+// GET /api/dashboard: Return aggregated dashboard data
+app.get("/api/dashboard", async (req, res) => {
+    try {
+        const query = `
+        SELECT DATE_FORMAT(ms.suggestion_date, '%b') AS month,
+               SUM(CASE WHEN u.mess_type = 'Veg' THEN 1 ELSE 0 END) AS veg,
+               SUM(CASE WHEN u.mess_type = 'Non-Veg' THEN 1 ELSE 0 END) AS nonVeg,
+               SUM(CASE WHEN u.mess_type = 'Special' THEN 1 ELSE 0 END) AS special
+        FROM mess_suggestions ms
+        JOIN users u ON ms.user_id = u.id
+        GROUP BY MONTH(ms.suggestion_date)
+        ORDER BY MONTH(ms.suggestion_date)
+      `;
+        const [rows] = await pool.query(query);
+        res.json(rows);
+    } catch (error) {
+        console.error("Dashboard data error:", error);
+        res.status(500).json({ error: "Failed to fetch dashboard data" });
+    }
+});
+
+// GET /api/feedback: Return all feedback suggestions
+app.get("/api/feedback", async (req, res) => {
+    try {
+        const query = `
+        SELECT u.reg_no AS id, u.fullname AS studentName, ms.suggestion_date AS date, ms.meal_type AS mealType, ms.food_item_suggestion AS feedback
+        FROM mess_suggestions ms
+        JOIN users u ON ms.user_id = u.id
+      `;
+        const [rows] = await pool.query(query);
+        res.json(rows);
+    } catch (error) {
+        console.error("Feedback fetch error:", error);
+        res.status(500).json({ error: "Failed to fetch feedback data" });
+    }
+});
+
+// POST /api/login: Log in an existing user by matching email and password
+app.post("/api/login", async (req, res) => {
+    const { email, password } = req.body;
+    try {
+      const [rows] = await pool.query(
+        "SELECT * FROM users WHERE email = ? AND password = ?",
+        [email, password]
+      );
+      if (rows.length === 0) {
+        return res.status(401).json({ error: "Invalid email or password" });
+      }
+      const user = rows[0];
+      // You can choose to send additional data or a token here
+      res.json({
+        message: "Login successful",
+        user: {
+          id: user.id,
+          reg_no: user.reg_no,
+          fullname: user.fullname,
+          email: user.email,
+        },
+      });
+    } catch (err) {
+      console.error("Login error:", err);
+      res.status(500).json({ error: "Login failed", details: err.message });
+    }
+  });
+  
 
 // GET /api/seed: Insert dummy data for testing
 app.get("/api/seed", async (req, res) => {
@@ -172,7 +251,7 @@ app.get("/api/seed", async (req, res) => {
             const [result] = await pool.query(
                 `INSERT INTO users (reg_no, fullname, email, password, block, room_number, mess_name, mess_type)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-                 [user.reg_no, user.fullname, user.email, user.password, user.block, user.room_number, user.mess_name, user.mess_type]
+                [user.reg_no, user.fullname, user.email, user.password, user.block, user.room_number, user.mess_name, user.mess_type]
             );
             return result.insertId;
         });
@@ -205,7 +284,7 @@ app.get("/api/seed", async (req, res) => {
             const [result] = await pool.query(
                 `INSERT INTO mess_suggestions (user_id, food_item_suggestion, meal_type, feasibility)
                  VALUES (?, ?, ?, ?)`,
-                 [suggestion.user_id, suggestion.food_item_suggestion, suggestion.meal_type, suggestion.feasibility]
+                [suggestion.user_id, suggestion.food_item_suggestion, suggestion.meal_type, suggestion.feasibility]
             );
             return result.insertId;
         });
