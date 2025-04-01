@@ -1,21 +1,38 @@
 import React, { useState } from "react";
+import { submitSuggestion } from "../services/api";
 
-const FoodSuggestion = ({ addSuggestion }) => {
+const FoodSuggestion = ({ onNewSuggestion }) => {
   const [foodItem, setFoodItem] = useState("");
   const [mealType, setMealType] = useState("BreakFast");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newSuggestion = {
-      id: Date.now(),
-      foodItem,
-      mealType,
+    // Assume user id is stored in localStorage after login
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      alert("User not logged in!");
+      return;
+    }
+
+    const suggestionData = {
+      user_id: userId,
+      food_item_suggestion: foodItem,
+      meal_type: mealType,
+      feasibility: 1, // you can adjust this value as needed
     };
 
-    addSuggestion(newSuggestion);
-
-    setFoodItem("");
-    setMealType("BreakFast");
+    try {
+      const response = await submitSuggestion(suggestionData);
+      // Optionally update parent's suggestion list
+      if (onNewSuggestion) {
+        onNewSuggestion(response);
+      }
+      setFoodItem("");
+      setMealType("BreakFast");
+    } catch (error) {
+      console.error("Error submitting suggestion:", error);
+      alert("Failed to submit suggestion");
+    }
   };
 
   return (

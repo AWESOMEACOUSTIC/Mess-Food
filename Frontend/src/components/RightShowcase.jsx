@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { registerUser } from "../services/api"; 
 
 function RightShowcase() {
-
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -27,10 +27,10 @@ function RightShowcase() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Check that all fields are filled
+
+    // Check that all required fields are filled
     if (
       !formData.fullName ||
       !formData.registrationNumber ||
@@ -43,19 +43,42 @@ function RightShowcase() {
       alert("Please fill in all the required fields.");
       return;
     }
-  
+
+    // Check for terms acceptance
     if (!formData.terms) {
       alert("Please agree to the Terms & Conditions.");
       return;
     }
-  
-    console.log(formData);
-    setMessage("Account created successfully!");
-  
-    // Navigate to home page after successful form submission
-    navigate("/");
-  
-    // Optionally, reset the form data
+
+    // Validate password confirmation
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    // Prepare user data in the format expected by the backend
+    const userData = {
+      reg_no: formData.registrationNumber,
+      fullname: formData.fullName,
+      email: formData.email,
+      password: formData.password, // In production, ensure passwords are handled securely
+      block: formData.hostelBlock,
+      room_number: formData.roomNumber,
+      mess_name: formData.messName,
+      mess_type: formData.messType,
+    };
+
+    try {
+      const response = await registerUser(userData);
+      console.log("User registered:", response);
+      setMessage("Account created successfully!");
+      navigate("/");
+    } catch (error) {
+      console.error("Registration failed:", error);
+      alert("Registration failed");
+    }
+
+    // Optionally, reset the form data after submission
     setFormData({
       fullName: "",
       registrationNumber: "",
@@ -69,7 +92,6 @@ function RightShowcase() {
       terms: false,
     });
   };
-  
 
   return (
     <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-16 bg-gray-900">
@@ -77,9 +99,10 @@ function RightShowcase() {
         <h2 className="text-3xl font-semibold mb-4">Create an account</h2>
         <p className="text-gray-400 mb-7">
           Already have an account?{" "}
-          <span 
-          onClick={() => navigate("/login")} 
-          className="text-blue-500 hover:underline cursor-pointer">
+          <span
+            onClick={() => navigate("/login")}
+            className="text-blue-500 hover:underline cursor-pointer"
+          >
             Log in
           </span>
         </p>
@@ -104,10 +127,7 @@ function RightShowcase() {
           </div>
 
           <div>
-            <label
-              htmlFor="registrationNumber"
-              className="block text-sm font-medium mb-4"
-            >
+            <label htmlFor="registrationNumber" className="block text-sm font-medium mb-4">
               Registration Number
             </label>
             <input
@@ -139,32 +159,32 @@ function RightShowcase() {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-4">
+            <label htmlFor="password" className="block text-sm font-medium mb-4">
               Password
             </label>
             <input
-              type="email"
-              id="email"
-              name="email"
+              type="password"
+              id="password"
+              name="password"
               className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter password"
-              value={formData.email}
+              placeholder="Enter your password"
+              value={formData.password}
               onChange={handleChange}
               required
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-4">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium mb-4">
               Confirm Password
             </label>
             <input
-              type="email"
-              id="email"
-              name="email"
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
               className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Confirm your password"
-              value={formData.email}
+              value={formData.confirmPassword}
               onChange={handleChange}
               required
             />
@@ -263,7 +283,7 @@ function RightShowcase() {
             </div>
           </div>
 
-          <div className="flex items-center ">
+          <div className="flex items-center">
             <input
               type="checkbox"
               id="terms"
@@ -283,7 +303,7 @@ function RightShowcase() {
 
           <button
             type="submit"
-            className="w-full mt-5 py-3 rounded-md bg-blue-500 hover:bg-blue-700 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-purple-500"
+            className="w-full mt-5 py-3 rounded-md bg-blue-500 hover:bg-blue-700 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Create account
           </button>

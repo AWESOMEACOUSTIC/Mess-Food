@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from "react";
 
-const dummyData = [
-  { id: "22BCT0043", studentName: "Aditya Panigrahy", date: "2025-03-01", mealType: "Veg", feedback: "Great food!" },
-  { id: "22BCI0185", studentName: "K Gourav", date: "2025-03-02", mealType: "Non-Veg", feedback: "Could be better" },
-  { id: "22BCI0158", studentName: "Agam Srivastava", date: "2025-03-03", mealType: "Special", feedback: "Loved the special menu" },
-  { id: "22BCT0071", studentName: "Rahul Sharma", date: "2025-03-04", mealType: "Veg", feedback: "Really enjoyed the meal!" },
-  { id: "22BCI0234", studentName: "Sannidhi Atmakuri", date: "2025-03-05", mealType: "Non-Veg", feedback: "Tasty and well-prepared." },
-  { id: "22BCT0099", studentName: "Sai Prasanna", date: "2025-03-06", mealType: "Special", feedback: "Special flavors, truly delightful." },
-  { id: "22BCI0112", studentName: "Maya Kapoor", date: "2025-03-07", mealType: "Veg", feedback: "Simple yet satisfying." },
-  { id: "22BCT0133", studentName: "Aniket Joshi", date: "2025-03-08", mealType: "Non-Veg", feedback: "Crispy and delicious." },
-  { id: "22BCI0177", studentName: "P Sai Pooja", date: "2025-03-09", mealType: "Special", feedback: "Exquisite presentation and taste." },
-];
-
 const FeedbackPage = () => {
   const [data, setData] = useState([]);
   const [reportType, setReportType] = useState("student-wise");
 
   useEffect(() => {
-    // Simulate fetching data from a SQL database
-    setTimeout(() => {
-      setData(dummyData);
-    }, 500);
+    // Fetch feedback data from the backend
+    const fetchFeedbackData = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL || "http://localhost:3001"}/api/feedback`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch feedback data");
+        }
+        const feedbackData = await response.json();
+        setData(feedbackData);
+      } catch (error) {
+        console.error("Error fetching feedback data:", error);
+      }
+    };
+
+    fetchFeedbackData();
   }, []);
 
   const handleDownload = (format) => {
@@ -32,7 +33,9 @@ const FeedbackPage = () => {
     <div className="p-6">
       {/* Report Options */}
       <div className="mb-4 flex items-center space-x-4">
-        <label htmlFor="reportType" className="text-lg">Select Report Type:</label>
+        <label htmlFor="reportType" className="text-lg">
+          Select Report Type:
+        </label>
         <select
           id="reportType"
           value={reportType}
