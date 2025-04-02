@@ -2,8 +2,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001
 
 /**
  * Register a new user.
- * @param {Object} userData - The user data to be sent to the backend.
- * @returns {Promise<Object>} The JSON response from the backend.
+ * @param {Object} userData 
+ * @returns {Promise<Object>} 
  */
 export async function registerUser(userData) {
   try {
@@ -24,8 +24,8 @@ export async function registerUser(userData) {
 
 /**
  * Submit a mess suggestion.
- * @param {Object} suggestionData - The suggestion data to be sent to the backend.
- * @returns {Promise<Object>} The JSON response from the backend.
+ * @param {Object} suggestionData - 
+ * @returns {Promise<Object>} 
  */
 export async function submitSuggestion(suggestionData) {
   try {
@@ -46,9 +46,9 @@ export async function submitSuggestion(suggestionData) {
 
 /**
  * Download a report in the specified format.
- * @param {string} format - The format of the report ('excel' or 'pdf').
- * @param {string} [reportType='all'] - The report type (e.g., student-wise, monthly, etc.).
- * @returns {Promise<Blob>} The downloaded file as a blob.
+ * @param {string} format - 
+ * @param {string} [reportType='all'] 
+ * @returns {Promise<Blob>} 
  */
 export async function downloadReport(format, reportType = 'all') {
   try {
@@ -65,7 +65,7 @@ export async function downloadReport(format, reportType = 'all') {
 
 /**
  * Fetch aggregated dashboard data.
- * @returns {Promise<Object[]>} The JSON response with aggregated dashboard data.
+ * @returns {Promise<Object[]>} 
  */
 export async function getDashboardData() {
   try {
@@ -82,7 +82,7 @@ export async function getDashboardData() {
 
 /**
  * Fetch all feedback suggestions.
- * @returns {Promise<Object[]>} The JSON response with feedback data.
+ * @returns {Promise<Object[]>} 
  */
 export async function getFeedback() {
   try {
@@ -99,8 +99,8 @@ export async function getFeedback() {
 
 /**
  * Log in an existing user.
- * @param {Object} loginData - An object containing email and password.
- * @returns {Promise<Object>} The JSON response from the backend.
+ * @param {Object} loginData - 
+ * @returns {Promise<Object>} 
  */
 export async function loginUser(loginData) {
   try {
@@ -113,13 +113,64 @@ export async function loginUser(loginData) {
     const data = await response.json();
     
     if (!response.ok) {
-      // If the server returned an error message, use it
       throw new Error(data.error || "Invalid email or password");
     }
     
     return data;
   } catch (error) {
     console.error("Error in loginUser:", error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch system statistics for admin dashboard.
+ * @returns {Promise<Object>} 
+ */
+export async function getSystemStats() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/system-stats`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch system statistics");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error in getSystemStats:", error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch admin user list.
+ * @returns {Promise<Object[]>} 
+ */
+export async function getAdminList() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/admins`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch admin list");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error in getAdminList:", error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch system access logs.
+ * @param {number} limit - Number of logs to fetch.
+ * @returns {Promise<Object[]>} 
+ */
+export async function getAccessLogs(limit = 5) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/access-logs?limit=${limit}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch access logs");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error in getAccessLogs:", error);
     throw error;
   }
 }

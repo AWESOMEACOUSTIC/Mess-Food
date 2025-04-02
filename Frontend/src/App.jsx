@@ -9,8 +9,7 @@ import HeroPage from "./components/HeroPage";
 import FeedbackPage from "./components/FeedbackPage"; 
 import AdminInfoPage from "./components/AdminInfoPage";
 
-// DashboardLayout wraps the sidebar and main content.
-// It uses state to control whether the dashboard or feedback page is shown.
+
 const DashboardLayout = () => {
   const [activePage, setActivePage] = useState("dashboard");
 
@@ -33,15 +32,14 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route
-          path="/"
+          path="/home"
           element={
             <div className="w-screen min-h-screen">
               <Home />
             </div>
           }
         />
-        <Route path="/hero" element={<HeroPage />} />
-        {/* Updated dashboard route to use the DashboardLayout */}
+        <Route path="/" element={<HeroPage />} />
         <Route path="/dashboard" element={<DashboardLayout />} />
       </Routes>
     </div>

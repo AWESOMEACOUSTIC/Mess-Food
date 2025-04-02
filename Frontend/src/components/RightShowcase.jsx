@@ -29,8 +29,6 @@ function RightShowcase() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Check that all required fields are filled
     if (
       !formData.fullName ||
       !formData.registrationNumber ||
@@ -44,24 +42,21 @@ function RightShowcase() {
       return;
     }
 
-    // Check for terms acceptance
     if (!formData.terms) {
       alert("Please agree to the Terms & Conditions.");
       return;
     }
 
-    // Validate password confirmation
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
 
-    // Prepare user data in the format expected by the backend
     const userData = {
       reg_no: formData.registrationNumber,
       fullname: formData.fullName,
       email: formData.email,
-      password: formData.password, // In production, ensure passwords are handled securely
+      password: formData.password, 
       block: formData.hostelBlock,
       room_number: formData.roomNumber,
       mess_name: formData.messName,
@@ -72,13 +67,12 @@ function RightShowcase() {
       const response = await registerUser(userData);
       console.log("User registered:", response);
       setMessage("Account created successfully!");
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       console.error("Registration failed:", error);
       alert("Registration failed");
     }
 
-    // Optionally, reset the form data after submission
     setFormData({
       fullName: "",
       registrationNumber: "",

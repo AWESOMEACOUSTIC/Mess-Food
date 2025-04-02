@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HomeIcon from "../assets/home-1.svg";
 import SettingIcon from "../assets/setting-2.svg"
+import logo from "../assets/logo.svg";
 
 
 const NavItem = ({ icon, label, isActive, onClick }) => (
@@ -26,17 +27,14 @@ const HomeSidebar = () => {
 
   const handleNavItemClick = (page) => {
     setActivePage(page);
-    // Additional logic 
   };
 
   const handleLogout = () => {
-    // Clear all items from localStorage
     localStorage.removeItem("userId");
     localStorage.removeItem("fullname");
     localStorage.removeItem("email");
     localStorage.removeItem("isLoggedIn");
     
-    // Redirect to login page
     navigate("/login");
   };
 
@@ -45,7 +43,7 @@ const HomeSidebar = () => {
     
       <div className="flex items-center gap-3 px-4 py-6">
         <img
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/16c881aef9af6ec86aa400103d24dd3bf02cb5c5"
+          src={logo}
           alt="Mess Food Logo"
           className="w-10 h-10 rounded-full object-cover"
         />

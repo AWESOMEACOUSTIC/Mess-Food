@@ -9,7 +9,6 @@ function Form() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Sign in with email and password using backend API
   const handleEmailSignIn = async (e) => {
     e.preventDefault();
     setError("");
@@ -18,12 +17,10 @@ function Form() {
     try {
       const result = await loginUser({ email, password });
       console.log("Login successful:", result);
-      // Store user details in localStorage (for example, user id)
       localStorage.setItem("userId", result.user.id);
       localStorage.setItem("fullname", result.user.fullname);
       localStorage.setItem("email", result.user.email);
       localStorage.setItem("isLoggedIn", "true");
-      // Navigate to home page after successful login
       navigate("/");
     } catch (err) {
       setError(err.message || "Login failed. Please check your credentials.");

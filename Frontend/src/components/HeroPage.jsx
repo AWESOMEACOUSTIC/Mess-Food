@@ -1,4 +1,5 @@
 import React from "react";
+import Logo from "../assets/logo.svg";
 import { useNavigate } from "react-router-dom";
 export default function HeroPage() {
     
@@ -12,7 +13,7 @@ export default function HeroPage() {
             <header className="flex items-center gap-1.5 p-2">
                 <div className="flex items-center gap-3 px-4 py-6">
                     <img
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/16c881aef9af6ec86aa400103d24dd3bf02cb5c5"
+                        src={Logo}
                         alt="Mess Food Logo"
                         className="w-10 h-10 rounded-full object-cover"
                     />
@@ -21,7 +22,7 @@ export default function HeroPage() {
             </header>
 
             <section className="flex flex-col items-center gap-3.5 mx-auto mt-10 max-w-[1225px] px-5">
-                <div className="rounded-xl bg-[#1C1E36] bg-opacity-50 px-4 py-4 text-2xl leading-7 tracking-tight text-stone-300">
+                <div className="rounded-[45px] bg-[#1C1E36] bg-opacity-50 px-4 py-4 text-2xl leading-7 tracking-tight text-stone-300">
                     ✨ Real-Time Student Food Feedback Engine →
                 </div>
 
@@ -32,7 +33,7 @@ export default function HeroPage() {
                         <div className="flex w-full flex-col items-center gap-1">
                             <h2 
                             className="text-7xl font-bold leading-20 max-md:text-4xl max-sm:text-3xl bg-gradient-to-t 
-                            from-[rgba(255,255,255,0.96)] to-[rgba(255,255,255,0.66)] bg-clip-text text-transparent">
+                            from-[rgba(255,255,255,0.96)] to-[rgba(255,255,255,0.62)] bg-clip-text text-transparent">
                                 Mess Food: Crowd-Powered
                             </h2>
                             <h2 

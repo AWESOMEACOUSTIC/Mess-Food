@@ -8,7 +8,7 @@ import { getFeedback } from "../services/api";
 function Home() {
   const [suggestions, setSuggestions] = useState([]);
 
-  // Fetch suggestions from the backend on component mount
+  // Fetching from backend
   useEffect(() => {
     const fetchSuggestions = async () => {
       try {
@@ -21,8 +21,6 @@ function Home() {
 
     fetchSuggestions();
   }, []);
-
-  // Callback to add a new suggestion to the list
   const handleNewSuggestion = (newSuggestion) => {
     setSuggestions((prev) => [newSuggestion, ...prev]);
   };

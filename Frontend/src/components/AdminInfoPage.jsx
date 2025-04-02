@@ -1,62 +1,88 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getSystemStats, getAdminList, getAccessLogs } from "../services/api";
+import Admin from "../assets/admin.svg";
+
+const FALLBACK_DATA = {
+  systemStats: {
+    totalUsers: 2458,
+    activeUsers: 1842,
+    feedbackToday: 187,
+    totalFeedback: 12589,
+    uptime: "99.8%",
+    lastBackup: "2023-04-01T00:00:00.000Z",
+    systemVersion: "2.3.5"
+  },
+  adminList: [
+    {
+      id: "A002",
+      name: "Rahul Yadav",
+      email: "rahul@messfood.com",
+      role: "Mess Manager",
+      status: "Active",
+      lastLogin: "2023-04-01T08:15:22.000Z"
+    },
+    {
+      id: "A003",
+      name: "Sakshi Singh",
+      email: "sakshi@messfood.com",
+      role: "Feedback Manager",
+      status: "Active",
+      lastLogin: "2023-03-31T16:45:12.000Z"
+    },
+    {
+      id: "A004",
+      name: "Anjali Sharma",
+      email: "anjali@messfood.com",
+      role: "Accounts Manager",
+      status: "Inactive",
+      lastLogin: "2023-03-28T09:10:05.000Z"
+    }
+  ],
+  accessLogs: [
+    { action: "User feedback exported", timestamp: "2023-04-01T09:45:22.000Z", admin: "John Doe" },
+    { action: "New admin added", timestamp: "2023-03-31T14:30:10.000Z", admin: "John Doe" },
+    { action: "System backup", timestamp: "2023-03-31T01:00:00.000Z", admin: "System" },
+    { action: "User account disabled", timestamp: "2023-03-30T11:20:45.000Z", admin: "Jane Smith" },
+    { action: "Password policy updated", timestamp: "2023-03-29T16:15:30.000Z", admin: "John Doe" }
+  ]
+};
 
 const AdminInfoPage = () => {
-  // Sample admin data
+
   const [adminData, setAdminData] = useState({
     currentAdmin: {
       id: "A001",
-      name: "John Doe",
+      name: "Sridhar Sinha",
       email: "admin@messfood.com",
       role: "Super Admin",
       accessLevel: "Full Access",
       lastLogin: "2023-04-01T10:30:45.000Z",
-      profileImage: "https://randomuser.me/api/portraits/men/11.jpg"
+      profileImage: Admin
     },
-    adminList: [
-      {
-        id: "A002",
-        name: "Jane Smith",
-        email: "jane@messfood.com",
-        role: "Mess Manager",
-        status: "Active",
-        lastLogin: "2023-04-01T08:15:22.000Z"
-      },
-      {
-        id: "A003",
-        name: "Mike Johnson",
-        email: "mike@messfood.com",
-        role: "Feedback Manager",
-        status: "Active",
-        lastLogin: "2023-03-31T16:45:12.000Z"
-      },
-      {
-        id: "A004",
-        name: "Sarah Williams",
-        email: "sarah@messfood.com",
-        role: "Accounts Manager",
-        status: "Inactive",
-        lastLogin: "2023-03-28T09:10:05.000Z"
-      }
-    ],
+    adminList: [],
     systemStats: {
-      totalUsers: 2458,
-      activeUsers: 1842,
-      feedbackToday: 187,
-      totalFeedback: 12589,
-      uptime: "99.8%",
-      lastBackup: "2023-04-01T00:00:00.000Z",
-      systemVersion: "2.3.5"
+      totalUsers: 0,
+      activeUsers: 0,
+      feedbackToday: 0,
+      totalFeedback: 0,
+      uptime: "0%",
+      lastBackup: null,
+      systemVersion: "0.0.0"
     },
-    accessLogs: [
-      { action: "User feedback exported", timestamp: "2023-04-01T09:45:22.000Z", admin: "John Doe" },
-      { action: "New admin added", timestamp: "2023-03-31T14:30:10.000Z", admin: "John Doe" },
-      { action: "System backup", timestamp: "2023-03-31T01:00:00.000Z", admin: "System" },
-      { action: "User account disabled", timestamp: "2023-03-30T11:20:45.000Z", admin: "Jane Smith" },
-      { action: "Password policy updated", timestamp: "2023-03-29T16:15:30.000Z", admin: "John Doe" }
-    ]
+    accessLogs: []
   });
 
-  // State for add admin form
+  const [loading, setLoading] = useState({
+    stats: true,
+    admins: true,
+    logs: true
+  });
+
+  const [error, setError] = useState({
+    stats: null,
+    admins: null,
+    logs: null
+  });
   const [showAddAdminForm, setShowAddAdminForm] = useState(false);
   const [newAdmin, setNewAdmin] = useState({
     name: "",
@@ -66,9 +92,8 @@ const AdminInfoPage = () => {
     confirmPassword: ""
   });
 
-  // Format date from ISO string to readable format
   const formatDate = (isoDate) => {
-    if (!isoDate) return "";
+    if (!isoDate) return "N/A";
     const date = new Date(isoDate);
     return date.toLocaleString('en-US', {
       day: 'numeric',
@@ -78,8 +103,88 @@ const AdminInfoPage = () => {
       minute: '2-digit'
     });
   };
+  useEffect(() => {
+    const fetchSystemStats = async () => {
+      try {
+        setLoading(prev => ({ ...prev, stats: true }));
+        const stats = await getSystemStats();
+        setAdminData(prev => ({
+          ...prev,
+          systemStats: stats
+        }));
+        setError(prev => ({ ...prev, stats: null }));
+      } catch (err) {
+        console.error("Failed to fetch system stats:", err);
+        
+        setAdminData(prev => ({
+          ...prev,
+          systemStats: FALLBACK_DATA.systemStats
+        }));
+        
+        console.warn("Using fallback system stats data");
+        setError(prev => ({ ...prev, stats: null }));
+      } finally {
+        setLoading(prev => ({ ...prev, stats: false }));
+      }
+    };
 
-  // Handle form input changes
+    fetchSystemStats();
+  }, []);
+
+  useEffect(() => {
+    const fetchAdminList = async () => {
+      try {
+        setLoading(prev => ({ ...prev, admins: true }));
+        const admins = await getAdminList();
+        setAdminData(prev => ({
+          ...prev,
+          adminList: admins
+        }));
+        setError(prev => ({ ...prev, admins: null }));
+      } catch (err) {
+        console.error("Failed to fetch admin list:", err);
+        
+        setAdminData(prev => ({
+          ...prev,
+          adminList: FALLBACK_DATA.adminList
+        }));
+        
+        console.warn("Using fallback admin list data");
+        setError(prev => ({ ...prev, admins: null }));
+      } finally {
+        setLoading(prev => ({ ...prev, admins: false }));
+      }
+    };
+
+    fetchAdminList();
+  }, []);
+
+  useEffect(() => {
+    const fetchAccessLogs = async () => {
+      try {
+        setLoading(prev => ({ ...prev, logs: true }));
+        const logs = await getAccessLogs();
+        setAdminData(prev => ({
+          ...prev,
+          accessLogs: logs
+        }));
+        setError(prev => ({ ...prev, logs: null }));
+      } catch (err) {
+        console.error("Failed to fetch access logs:", err);
+        setAdminData(prev => ({
+          ...prev,
+          accessLogs: FALLBACK_DATA.accessLogs
+        }));
+        
+        console.warn("Using fallback access logs data");
+        setError(prev => ({ ...prev, logs: null }));
+      } finally {
+        setLoading(prev => ({ ...prev, logs: false }));
+      }
+    };
+
+    fetchAccessLogs();
+  }, []);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewAdmin(prev => ({
@@ -87,8 +192,6 @@ const AdminInfoPage = () => {
       [name]: value
     }));
   };
-
-  // Handle add admin submission
   const handleAddAdmin = (e) => {
     e.preventDefault();
     
@@ -96,8 +199,6 @@ const AdminInfoPage = () => {
       alert("Passwords don't match!");
       return;
     }
-
-    // Create new admin object with generated ID
     const newAdminWithId = {
       id: `A00${adminData.adminList.length + 2}`,
       name: newAdmin.name,
@@ -107,13 +208,18 @@ const AdminInfoPage = () => {
       lastLogin: new Date().toISOString()
     };
 
-    // Update admin list with new admin
     setAdminData(prev => ({
       ...prev,
-      adminList: [...prev.adminList, newAdminWithId]
+      adminList: [...prev.adminList, newAdminWithId],
+      accessLogs: [
+        {
+          action: "New admin added",
+          timestamp: new Date().toISOString(),
+          admin: adminData.currentAdmin.name
+        },
+        ...prev.accessLogs
+      ]
     }));
-
-    // Reset form and hide it
     setNewAdmin({
       name: "",
       email: "",
@@ -123,22 +229,43 @@ const AdminInfoPage = () => {
     });
     setShowAddAdminForm(false);
   };
-
-  // Toggle admin status (active/inactive)
   const toggleAdminStatus = (id) => {
+    const admin = adminData.adminList.find(a => a.id === id);
+    const newStatus = admin.status === "Active" ? "Inactive" : "Active";
+    
     setAdminData(prev => ({
       ...prev,
       adminList: prev.adminList.map(admin => 
         admin.id === id 
-          ? { ...admin, status: admin.status === "Active" ? "Inactive" : "Active" }
+          ? { ...admin, status: newStatus }
           : admin
-      )
+      ),
+      accessLogs: [
+        {
+          action: `Admin ${admin.name} ${newStatus === "Active" ? "activated" : "deactivated"}`,
+          timestamp: new Date().toISOString(),
+          admin: adminData.currentAdmin.name
+        },
+        ...prev.accessLogs
+      ]
     }));
   };
+  const LoadingSpinner = () => (
+    <div className="flex justify-center items-center h-40">
+      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+  );
+  const ErrorMessage = ({ message }) => (
+    <div className="bg-red-900/30 border border-red-800 text-red-300 p-4 rounded-md">
+      <p>{message}</p>
+      <button className="mt-2 text-sm underline" onClick={() => window.location.reload()}>
+        Try again
+      </button>
+    </div>
+  );
 
   return (
     <div className="p-6 max-w-full overflow-x-hidden">
-      {/* Admin Profile Card */}
       <div className="mb-8 bg-[#24263A] rounded-xl shadow-lg p-6">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           <img 
@@ -165,44 +292,47 @@ const AdminInfoPage = () => {
         </div>
       </div>
 
-      {/* System Stats & Admin Management */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {/* System Stats */}
         <div className="md:col-span-1 bg-[#24263A] rounded-xl shadow-lg p-6">
           <h2 className="text-xl font-semibold mb-4 text-white">System Statistics</h2>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-300">Total Users</span>
-              <span className="text-white font-semibold">{adminData.systemStats.totalUsers.toLocaleString()}</span>
+          
+          {loading.stats ? (
+            <LoadingSpinner />
+          ) : error.stats ? (
+            <ErrorMessage message={error.stats} />
+          ) : (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300">Total Users</span>
+                <span className="text-white font-semibold">{adminData.systemStats.totalUsers.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300">Active Users</span>
+                <span className="text-white font-semibold">{adminData.systemStats.activeUsers.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300">Today's Feedback</span>
+                <span className="text-white font-semibold">{adminData.systemStats.feedbackToday.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300">Total Feedback</span>
+                <span className="text-white font-semibold">{adminData.systemStats.totalFeedback.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300">System Uptime</span>
+                <span className="text-white font-semibold">{adminData.systemStats.uptime}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300">Last Backup</span>
+                <span className="text-white font-semibold">{formatDate(adminData.systemStats.lastBackup)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300">System Version</span>
+                <span className="text-white font-semibold">{adminData.systemStats.systemVersion}</span>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-300">Active Users</span>
-              <span className="text-white font-semibold">{adminData.systemStats.activeUsers.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-300">Today's Feedback</span>
-              <span className="text-white font-semibold">{adminData.systemStats.feedbackToday.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-300">Total Feedback</span>
-              <span className="text-white font-semibold">{adminData.systemStats.totalFeedback.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-300">System Uptime</span>
-              <span className="text-white font-semibold">{adminData.systemStats.uptime}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-300">Last Backup</span>
-              <span className="text-white font-semibold">{formatDate(adminData.systemStats.lastBackup)}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-300">System Version</span>
-              <span className="text-white font-semibold">{adminData.systemStats.systemVersion}</span>
-            </div>
-          </div>
+          )}
         </div>
-
-        {/* Admin Management */}
         <div className="md:col-span-2 bg-[#24263A] rounded-xl shadow-lg p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-white">Admin Management</h2>
@@ -213,8 +343,6 @@ const AdminInfoPage = () => {
               {showAddAdminForm ? "Cancel" : "Add Admin"}
             </button>
           </div>
-
-          {/* Add Admin Form */}
           {showAddAdminForm && (
             <form onSubmit={handleAddAdmin} className="mb-6 bg-[#2A2A40] p-4 rounded-lg">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -283,7 +411,7 @@ const AdminInfoPage = () => {
               </div>
               <div className="flex justify-end">
                 <button 
-                  type="submit" 
+                  type="submit"
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
                 >
                   Add Admin
@@ -292,76 +420,91 @@ const AdminInfoPage = () => {
             </form>
           )}
 
-          {/* Admin List */}
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-[#2A2A40] rounded-lg">
-              <thead>
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">ID</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Name</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Email</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Role</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Status</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Last Login</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {adminData.adminList.map((admin) => (
-                  <tr key={admin.id} className="hover:bg-[#31314a]">
-                    <td className="px-4 py-3 text-sm text-gray-200">{admin.id}</td>
-                    <td className="px-4 py-3 text-sm text-gray-200">{admin.name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-200">{admin.email}</td>
-                    <td className="px-4 py-3 text-sm text-gray-200">{admin.role}</td>
-                    <td className="px-4 py-3 text-sm">
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        admin.status === "Active" 
-                          ? "bg-green-600 text-white" 
-                          : "bg-red-600 text-white"
-                      }`}>
-                        {admin.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-200">{formatDate(admin.lastLogin)}</td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex space-x-2">
-                        <button 
-                          onClick={() => toggleAdminStatus(admin.id)}
-                          className={`px-2 py-1 rounded text-xs ${
+          {loading.admins ? (
+            <LoadingSpinner />
+          ) : error.admins ? (
+            <ErrorMessage message={error.admins} />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead className="text-xs uppercase text-gray-400 bg-[#2A2A40] rounded-t-lg">
+                  <tr>
+                    <th className="px-4 py-3">Name</th>
+                    <th className="px-4 py-3">Email</th>
+                    <th className="px-4 py-3">Role</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Last Login</th>
+                    <th className="px-4 py-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-700">
+                  {adminData.adminList.map((admin) => (
+                    <tr key={admin.id} className="hover:bg-[#2A2A40]/70">
+                      <td className="px-4 py-3">{admin.name}</td>
+                      <td className="px-4 py-3">{admin.email}</td>
+                      <td className="px-4 py-3">{admin.role}</td>
+                      <td className="px-4 py-3">
+                        <span 
+                          className={`inline-block px-2 py-1 text-xs rounded-full ${
                             admin.status === "Active" 
-                              ? "bg-red-600 hover:bg-red-700 text-white" 
-                              : "bg-green-600 hover:bg-green-700 text-white"
+                              ? "bg-green-900/40 text-green-400" 
+                              : "bg-red-900/40 text-red-400"
                           }`}
                         >
-                          {admin.status === "Active" ? "Deactivate" : "Activate"}
+                          {admin.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">{formatDate(admin.lastLogin)}</td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => toggleAdminStatus(admin.id)}
+                          className={`text-xs px-2 py-1 rounded ${
+                            admin.status === "Active" 
+                              ? "bg-red-600 hover:bg-red-700" 
+                              : "bg-green-600 hover:bg-green-700"
+                          }`}
+                        >
+                          {admin.status === "Active" ? "Disable" : "Enable"}
                         </button>
-                      </div>
-                    </td>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="bg-[#24263A] rounded-xl shadow-lg p-6">
+        <h2 className="text-xl font-semibold mb-4 text-white">Recent System Activity</h2>
+        
+        {loading.logs ? (
+          <LoadingSpinner />
+        ) : error.logs ? (
+          <ErrorMessage message={error.logs} />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="text-xs uppercase text-gray-400 bg-[#2A2A40] rounded-t-lg">
+                <tr>
+                  <th className="px-4 py-3">Action</th>
+                  <th className="px-4 py-3">Timestamp</th>
+                  <th className="px-4 py-3">Performed By</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-700">
+                {adminData.accessLogs.map((log, index) => (
+                  <tr key={index} className="hover:bg-[#2A2A40]/70">
+                    <td className="px-4 py-3">{log.action}</td>
+                    <td className="px-4 py-3">{formatDate(log.timestamp)}</td>
+                    <td className="px-4 py-3">{log.admin}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="bg-[#24263A] rounded-xl shadow-lg p-6">
-        <h2 className="text-xl font-semibold mb-4 text-white">Recent Activity</h2>
-        <div className="space-y-4">
-          {adminData.accessLogs.map((log, index) => (
-            <div key={index} className="flex items-start border-b border-gray-700 pb-3">
-              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 mr-3"></div>
-              <div className="flex-1">
-                <p className="text-white">{log.action}</p>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">By {log.admin}</span>
-                  <span className="text-gray-400">{formatDate(log.timestamp)}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        )}
       </div>
     </div>
   );

@@ -9,7 +9,6 @@ const DashBoard = () => {
   const [feedbackData, setFeedbackData] = useState([]);
 
   useEffect(() => {
-    // Simulate an API call with dummy data
     const fetchFeedbackData = async () => {
       setTimeout(() => {
         const data = [
@@ -33,7 +32,7 @@ const DashBoard = () => {
     fetchFeedbackData();
   }, []);
 
-  // Calculate totals for each category
+ 
   const totalVeg = feedbackData.reduce((acc, cur) => acc + (cur.veg || 0), 0);
   const totalNonVeg = feedbackData.reduce((acc, cur) => acc + (cur.nonVeg || 0), 0);
   const totalSpecial = feedbackData.reduce((acc, cur) => acc + (cur.special || 0), 0);
@@ -42,7 +41,6 @@ const DashBoard = () => {
   const nonVegPercentage = "-3%";
   const specialPercentage = "+10%";
 
-  // Prepare data for the bar chart (summing all feedback per month)
   const monthlyTotalData = feedbackData.map((item) => ({
     month: item.month,
     total: (item.veg || 0) + (item.nonVeg || 0) + (item.special || 0),
