@@ -21,7 +21,7 @@ function Form() {
       localStorage.setItem("fullname", result.user.fullname);
       localStorage.setItem("email", result.user.email);
       localStorage.setItem("isLoggedIn", "true");
-      navigate("/");
+      navigate("/home");
     } catch (err) {
       setError(err.message || "Login failed. Please check your credentials.");
     } finally {

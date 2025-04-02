@@ -4,12 +4,12 @@ import Admin from "../assets/admin.svg";
 
 const FALLBACK_DATA = {
   systemStats: {
-    totalUsers: 2458,
-    activeUsers: 1842,
-    feedbackToday: 187,
-    totalFeedback: 12589,
+    totalUsers: 200,
+    activeUsers: 142,
+    feedbackToday: 18,
+    totalFeedback: 1254,
     uptime: "99.8%",
-    lastBackup: "2023-04-01T00:00:00.000Z",
+    lastBackup: "2025-04-01T00:00:00.000Z",
     systemVersion: "2.3.5"
   },
   adminList: [
@@ -19,7 +19,7 @@ const FALLBACK_DATA = {
       email: "rahul@messfood.com",
       role: "Mess Manager",
       status: "Active",
-      lastLogin: "2023-04-01T08:15:22.000Z"
+      lastLogin: "2025-04-01T08:15:22.000Z"
     },
     {
       id: "A003",
@@ -27,7 +27,7 @@ const FALLBACK_DATA = {
       email: "sakshi@messfood.com",
       role: "Feedback Manager",
       status: "Active",
-      lastLogin: "2023-03-31T16:45:12.000Z"
+      lastLogin: "2025-03-31T16:45:12.000Z"
     },
     {
       id: "A004",
@@ -35,15 +35,15 @@ const FALLBACK_DATA = {
       email: "anjali@messfood.com",
       role: "Accounts Manager",
       status: "Inactive",
-      lastLogin: "2023-03-28T09:10:05.000Z"
+      lastLogin: "2025-03-28T09:10:05.000Z"
     }
   ],
   accessLogs: [
-    { action: "User feedback exported", timestamp: "2023-04-01T09:45:22.000Z", admin: "John Doe" },
-    { action: "New admin added", timestamp: "2023-03-31T14:30:10.000Z", admin: "John Doe" },
-    { action: "System backup", timestamp: "2023-03-31T01:00:00.000Z", admin: "System" },
-    { action: "User account disabled", timestamp: "2023-03-30T11:20:45.000Z", admin: "Jane Smith" },
-    { action: "Password policy updated", timestamp: "2023-03-29T16:15:30.000Z", admin: "John Doe" }
+    { action: "User feedback exported", timestamp: "2025-04-01T09:45:22.000Z", admin: "Sridhar Sinha" },
+    { action: "New admin added", timestamp: "2025-03-31T14:30:10.000Z", admin: "Sridhar Sinha" },
+    { action: "System backup", timestamp: "2025-03-31T01:00:00.000Z", admin: "System" },
+    { action: "User account disabled", timestamp: "2025-03-30T11:20:45.000Z", admin: "Sakshi Singh" },
+    { action: "Account policy updated", timestamp: "2025-03-29T16:15:30.000Z", admin: "Anjali Sharma" }
   ]
 };
 
