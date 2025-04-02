@@ -1,4 +1,4 @@
-require('dotenv').config(); // Load environment variables from .env file
+require('dotenv').config(); 
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
@@ -7,11 +7,8 @@ const ExcelJS = require('exceljs');
 
 const app = express();
 const port = process.env.PORT || 3001;
-
-// Use CORS middleware to allow cross-origin requests
 app.use(cors());
 
-// Middleware to parse JSON requests
 app.use(express.json());
 
 // MySQL Connection Pool using promise interface
@@ -25,15 +22,12 @@ const pool = mysql.createPool({
     queueLimit: 0
 }).promise();
 
-// Middleware to parse JSON requests
 app.use(express.json());
 
-// Simple route to check if server is running
 app.get('/', (req, res) => {
     res.send('Backend server is running!');
 });
 
-// Route to test database connection
 app.get('/test-db', async (req, res) => {
     try {
         const connection = await pool.getConnection();
@@ -119,11 +113,9 @@ app.get("/api/reports", async (req, res) => {
             await workbook.xlsx.write(res);
             res.end();
         } else if (format === "csv") {
-            // Create CSV content
             let csvContent = "User ID,Name,Date,Meal Type,Feedback\n";
             
             rows.forEach(row => {
-                // Escape any commas in the content with quotes
                 const escapedFeedback = row.feedback.includes(',') ? `"${row.feedback}"` : row.feedback;
                 const escapedName = row.fullname.includes(',') ? `"${row.fullname}"` : row.fullname;
                 
@@ -198,8 +190,6 @@ app.get("/api/feedback", async (req, res) => {
 // POST /api/login: Log in an existing user by matching email and password
 app.post("/api/login", async (req, res) => {
     const { email, password } = req.body;
-    
-    // Basic validation
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required" });
     }
@@ -215,8 +205,7 @@ app.post("/api/login", async (req, res) => {
       const user = rows[0];
       
       console.log(`User logged in: ${user.fullname} (${user.email})`);
-      
-      // Send response with user details
+
       res.json({
         message: "Login successful",
         user: {
@@ -270,7 +259,7 @@ app.get("/api/seed", async (req, res) => {
             }
         ];
 
-        // Insert dummy users
+        // dummy users
         const userInsertPromises = dummyUsers.map(async (user) => {
             const [result] = await pool.query(
                 `INSERT INTO users (reg_no, fullname, email, password, block, room_number, mess_name, mess_type)
@@ -281,7 +270,7 @@ app.get("/api/seed", async (req, res) => {
         });
         const userIds = await Promise.all(userInsertPromises);
 
-        // Dummy suggestion data using inserted user IDs
+        // Dummy suggestion 
         const dummySuggestions = [
             {
                 user_id: userIds[0],
